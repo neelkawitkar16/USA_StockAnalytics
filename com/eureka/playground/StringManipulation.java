@@ -1,4 +1,4 @@
-package com.eureka.stockAnalysis.playground;
+package com.eureka.playground;
 
 public class StringManipulation {
     public static void main(String[] args) {

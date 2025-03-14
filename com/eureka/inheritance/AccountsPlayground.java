@@ -1,4 +1,4 @@
-package com.eureka.stockAnalysis.inheritance;
+package com.eureka.inheritance;
 
 import java.math.BigDecimal;
 

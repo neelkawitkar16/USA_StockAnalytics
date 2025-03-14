@@ -1,4 +1,4 @@
-package com.eureka.stockAnalysis.inheritance;
+package com.eureka.inheritance;
 
 public class TestPlayground {
     public static void main(String[] args) {
