@@ -37,4 +37,8 @@ public class FirmOperations {
         }
         return bonus;
     }
+
+    public static void myName() {
+        System.out.println("This is a static method and my name is Neel");
+    }
 }

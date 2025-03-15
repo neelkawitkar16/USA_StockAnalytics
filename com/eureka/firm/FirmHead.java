@@ -4,6 +4,11 @@ import java.math.BigDecimal;
 import java.util.Arrays;
 
 public class FirmHead {
+    static {
+        System.out.println("Test for static code block");
+        FirmOperations.myName();
+    }
+
     public static void main(String[] args) {
         Employee[] firm = createFirm();
         FirmOperations firmops = new FirmOperations();
@@ -20,6 +25,8 @@ public class FirmHead {
         BigDecimal totalBonus = firmops.bonusImpact(firm, 3F);
         System.out.println("Total bonus is: " + totalBonus);
 
+        FirmOperations.myName();
+
     }
 
     public static Employee[] createFirm() {
@@ -34,6 +41,9 @@ public class FirmHead {
                 "B", "dev", "Delivery", "986-85-9553", "Java Developer",
                 "APPLE", 4);
         firm[1] = dev2;
+
+        System.out.println("Default equals method: " + dev1.equals(dev2));
+        // Check for equals method where you can specifically check for two objects contents
 
         Developer dev3 = new Developer("Superman", 87656, "03/12/1974", new BigDecimal(7000),
                 "B", "dev", "Delivery", "896-85-9553", "Sr. Java Developer",
