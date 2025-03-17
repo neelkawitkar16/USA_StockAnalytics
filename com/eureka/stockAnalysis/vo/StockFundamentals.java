@@ -31,7 +31,7 @@ public class StockFundamentals {
                 ", subsectorId=" + subsectorId +
                 ", marketCap=" + marketCap +
                 ", currentRatio=" + currentRatio +
-                '}';
+                "}\n";
     }
 
     public float getCurrentRatio() {
