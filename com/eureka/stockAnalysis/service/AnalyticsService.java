@@ -27,10 +27,10 @@ public class AnalyticsService {
    }
 
    public static StockFundamentals createStockFundamentalsObject(String tickerSymbol,
-                                                                  int sectorId,
-                                                                  int subsectorId,
-                                                                  long marketCap,
-                                                                  float currentRatio){
+                                                                 int sectorId,
+                                                                 int subsectorId,
+                                                                 long marketCap,
+                                                                 float currentRatio){
        StockFundamentals stockFundamentalsObject = new StockFundamentals(tickerSymbol,
                sectorId,
                subsectorId,

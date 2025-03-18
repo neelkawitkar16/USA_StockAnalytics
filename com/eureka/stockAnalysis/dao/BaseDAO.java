@@ -1,5 +1,7 @@
 package com.eureka.stockAnalysis.dao;
 
+import com.eureka.stockAnalysis.exception.StockException;
+
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -15,7 +17,8 @@ public class BaseDAO implements AutoCloseable{
         try {
             this.connection = DriverManager.getConnection(jdbcURL, username, password);
         } catch (SQLException e) {
-            System.out.println("There is a SQL Exception in base DAO: " +e.getMessage());
+            e.printStackTrace(); // this is prints the stack trace
+            throw new StockException("There is stock exception in the base DAO:" + e.getMessage(), e.getCause()); // this is custom exception
         }
     }
 

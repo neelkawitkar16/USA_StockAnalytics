@@ -1,5 +1,6 @@
 package com.eureka.stockAnalysis.dao;
 
+import com.eureka.stockAnalysis.exception.StockException;
 import com.eureka.stockAnalysis.vo.SectorVO;
 import com.eureka.stockAnalysis.vo.SubsectorVO;
 
@@ -28,7 +29,7 @@ public class LookupDAO extends BaseDAO {
                 sectorVOArrayList.add(sectorVO);
             }
         } catch (SQLException e) {
-            System.out.println("There is SQL exception in LookUp DAO" + e.getMessage());
+            throw new StockException("There is stock exception in the Lookup DAO:" + e.getMessage(), e.getCause());
         }
         return sectorVOArrayList;
     }
