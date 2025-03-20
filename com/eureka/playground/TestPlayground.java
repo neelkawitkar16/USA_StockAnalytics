@@ -12,6 +12,11 @@ public class TestPlayground {
         passing(teslaStock, a);
         System.out.println("Apple Stock: " + teslaStock + "Integer value:" + a);
 
+        int[] arr = {1,2,3,4,5,6};
+        System.out.println(arr);
+        System.out.println(arr[4]);
+        System.out.println(arr.length);
+
        /* //Java Scanner to accept inputs from user through console
         Scanner scanner = new Scanner(System.in);
         System.out.println("Enter a number between 1 and 10: ");

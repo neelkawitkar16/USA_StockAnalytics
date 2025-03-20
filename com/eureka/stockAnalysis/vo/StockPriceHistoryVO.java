@@ -2,6 +2,7 @@ package com.eureka.stockAnalysis.vo;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.Objects;
 
 public class StockPriceHistoryVO {
         private String tickerSymbol;
@@ -57,6 +58,17 @@ public class StockPriceHistoryVO {
 
     public void setVolume(BigDecimal volume) {
         this.volume = volume;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (!(o instanceof StockPriceHistoryVO that)) return false;
+        return Objects.equals(getTickerSymbol(), that.getTickerSymbol());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(getTickerSymbol());
     }
 
     @Override

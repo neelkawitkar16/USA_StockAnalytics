@@ -1,15 +1,13 @@
 package com.eureka.stockAnalysis;
 
+import com.eureka.stockAnalysis.dao.CompanyLocationsDAO;
 import com.eureka.stockAnalysis.dao.LookupDAO;
 import com.eureka.stockAnalysis.dao.StockFundamentalsDAO;
 import com.eureka.stockAnalysis.dao.StockPriceHistoryDAO;
 import com.eureka.stockAnalysis.service.MarketAnalyticsService;
 import com.eureka.stockAnalysis.sort.SFCurrentRatioComparator;
 import com.eureka.stockAnalysis.sort.SFMarketCapComparator;
-import com.eureka.stockAnalysis.vo.SectorVO;
-import com.eureka.stockAnalysis.vo.StockFundamentalsVO;
-import com.eureka.stockAnalysis.vo.StockPriceHistoryVO;
-import com.eureka.stockAnalysis.vo.SubsectorVO;
+import com.eureka.stockAnalysis.vo.*;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -21,9 +19,10 @@ public class StocksController {
         LookupDAO lookupDAO = new LookupDAO();
         StockFundamentalsDAO stockFundamentals2DAO = new StockFundamentalsDAO();
         StockPriceHistoryDAO stockPriceHistoryDAO =new StockPriceHistoryDAO();
-        MarketAnalyticsService marketAnalyticsService = new MarketAnalyticsService(lookupDAO, stockFundamentals2DAO, stockPriceHistoryDAO);
+        CompanyLocationsDAO companyLocationsDAO = new CompanyLocationsDAO();
+        MarketAnalyticsService marketAnalyticsService = new MarketAnalyticsService(lookupDAO, stockFundamentals2DAO, stockPriceHistoryDAO, companyLocationsDAO);
 
-        ArrayList<SectorVO> allSectors = marketAnalyticsService.getAllSectors();
+       /* ArrayList<SectorVO> allSectors = marketAnalyticsService.getAllSectors();
         System.out.println("Sectors List: " + allSectors);
         System.out.println("\n");
 
@@ -38,8 +37,24 @@ public class StocksController {
         ArrayList<StockFundamentalsVO> allStockFundamentalsList = marketAnalyticsService.getAllStockFundamentals();
         System.out.println("All Stock Fundamentals" + allStockFundamentalsList);
         System.out.println("\n");
+*/
+        ArrayList<CompanyLocationsVO> companyLocationsList = marketAnalyticsService.getCompanyLocations();
+        //Collections.sort(companyLocationsList);
+        Collections.sort(companyLocationsList, new Comparator<CompanyLocationsVO>() {
+            @Override
+            public int compare(CompanyLocationsVO o1, CompanyLocationsVO o2) {
+                return o1.getCity().compareTo(o2.getCity()); //sort city ascending
+            }
+        });
+/*        Collections.sort(companyLocationsList, new Comparator<CompanyLocationsVO>() {
+            @Override
+            public int compare(CompanyLocationsVO o1, CompanyLocationsVO o2) {
+                return o2.getZip().compareTo(o1.getZip()); // sort zip desc
+            }
+        });*/
+        System.out.println("The companies location" + companyLocationsList);
 
-        try {
+       /* try {
             ArrayList<StockPriceHistoryVO> lastThirtyDayStockList = marketAnalyticsService.getLastThirtyDayStocks();
             lastThirtyDayStockList.sort(new Comparator<StockPriceHistoryVO>() {
                 @Override
@@ -51,13 +66,13 @@ public class StocksController {
             System.out.println("\n");
         } catch (SQLException e) {
             throw new RuntimeException(e);
-        }
+        }*/
 
         // COMPARATOR COMPARABLE
 /*        SFCurrentRatioComparator sfCurrentRatioComparator = new SFCurrentRatioComparator();
         topStocks.sort(sfCurrentRatioComparator);
         System.out.println("\nThis is sorting the CR by using comparator concept" + sfCurrentRatioComparator);*/
-
+/*
         SFMarketCapComparator sfMarketCapComparator = new SFMarketCapComparator();
         //One way to SOrt using Custom Comparator
         //allStockFundamentalsList.sort(sfMarketCapComparator);
@@ -77,6 +92,6 @@ public class StocksController {
                     return 1;
                 }
             }
-        });
+        });*/
     }
 }
