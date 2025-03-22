@@ -34,7 +34,7 @@ public class StockFundamentalsVO implements Comparable<StockFundamentalsVO>{
 
     @Override
     public String toString() {
-        return "StockFundamentals2{" +
+        return "StockFundamentals{" +
                 "tickerSymbol='" + tickerSymbol + '\'' +
                 ", sectorID=" + sectorId +
                 ", subSectorId=" + subSectorId +
