@@ -22,7 +22,7 @@ public class StocksController {
         CompanyLocationsDAO companyLocationsDAO = new CompanyLocationsDAO();
         MarketAnalyticsService marketAnalyticsService = new MarketAnalyticsService(lookupDAO, stockFundamentals2DAO, stockPriceHistoryDAO, companyLocationsDAO);
 
-       /* ArrayList<SectorVO> allSectors = marketAnalyticsService.getAllSectors();
+        ArrayList<SectorVO> allSectors = marketAnalyticsService.getAllSectors();
         System.out.println("Sectors List: " + allSectors);
         System.out.println("\n");
 
@@ -37,7 +37,7 @@ public class StocksController {
         ArrayList<StockFundamentalsVO> allStockFundamentalsList = marketAnalyticsService.getAllStockFundamentals();
         System.out.println("All Stock Fundamentals" + allStockFundamentalsList);
         System.out.println("\n");
-*/
+
         ArrayList<CompanyLocationsVO> companyLocationsList = marketAnalyticsService.getCompanyLocations();
         //Collections.sort(companyLocationsList);
         Collections.sort(companyLocationsList, new Comparator<CompanyLocationsVO>() {
@@ -54,7 +54,7 @@ public class StocksController {
         });*/
         System.out.println("The companies location" + companyLocationsList);
 
-       /* try {
+        try {
             ArrayList<StockPriceHistoryVO> lastThirtyDayStockList = marketAnalyticsService.getLastThirtyDayStocks();
             lastThirtyDayStockList.sort(new Comparator<StockPriceHistoryVO>() {
                 @Override
@@ -66,13 +66,11 @@ public class StocksController {
             System.out.println("\n");
         } catch (SQLException e) {
             throw new RuntimeException(e);
-        }*/
+        }
 
-        // COMPARATOR COMPARABLE
 /*        SFCurrentRatioComparator sfCurrentRatioComparator = new SFCurrentRatioComparator();
         topStocks.sort(sfCurrentRatioComparator);
         System.out.println("\nThis is sorting the CR by using comparator concept" + sfCurrentRatioComparator);*/
-/*
         SFMarketCapComparator sfMarketCapComparator = new SFMarketCapComparator();
         //One way to SOrt using Custom Comparator
         //allStockFundamentalsList.sort(sfMarketCapComparator);
@@ -92,6 +90,6 @@ public class StocksController {
                     return 1;
                 }
             }
-        });*/
+        });
     }
 }

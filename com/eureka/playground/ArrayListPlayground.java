@@ -71,5 +71,9 @@ public class ArrayListPlayground {
             System.out.println("Dummy list is EMPTY!!");
         }
 
+        tickerSymbol.forEach(s-> {
+            System.out.println("Ticker Symbol in Consumer: " + s);
+        });
+
     }
 }

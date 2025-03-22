@@ -20,10 +20,11 @@ public class LookupDAO extends BaseDAO {
 
         try {
             PreparedStatement preparedStatement = connection.prepareStatement(sqlQuery);
-            ResultSet resultSet = preparedStatement.executeQuery();
+            System.out.println(preparedStatement); // select * from endeavour.sector_lookup
+            ResultSet resultSet = preparedStatement.executeQuery(); // resultSet -> org.postgresql.jdbc.PgResultSet@78186a70
 
             while (resultSet.next()) {
-                SectorVO sectorVO = new SectorVO();
+                SectorVO sectorVO = new SectorVO(); // obj
                 sectorVO.setSectorID(resultSet.getInt("sector_id"));
                 sectorVO.setSectorName(resultSet.getString("sector_name"));
                 sectorVOArrayList.add(sectorVO);
