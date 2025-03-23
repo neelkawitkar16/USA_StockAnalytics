@@ -1,11 +1,12 @@
 package com.eureka.playground;
 
+import java.net.Inet4Address;
 import java.util.*;
 
 public class MapsPlayground {
     public static void main(String[] args) {
 
-        //HashMap Collection it doesn't preserve the order, and it hold only one null key and can hold multiple null value
+        //HashMap Collection it doesn't preserve the order, and it holds only one null key and can hold multiple null value
         //Can't have a duplicate entry of key
         //TreeMap
         Map<Integer,String> sectors = new HashMap(); //key value
@@ -49,5 +50,35 @@ public class MapsPlayground {
             }
         });
         System.out.println(countMap);
+
+        Map<String, Integer> countMap2 = new HashMap<>();
+        //Example ofComputeIfPresent
+        values.forEach( s -> {
+            sectorNames.forEach( a -> {
+                if (s.equals(a)) {
+                    Integer integer = countMap2.computeIfPresent(s, (x, y) -> y);
+                    if (integer != null) {
+                        countMap2.put(s, integer + 1);
+                    } else  {
+                        countMap2.put(s,1);
+                    }
+                }
+            });
+        });
+        System.out.println(countMap2);
+
+        //Example of ComputeIfAbsent
+        Map<String, Integer> countMap3 = new HashMap<>();
+        values.forEach(sectorIdFromMap -> {
+            sectorNames.forEach(sectorIdFromList -> {
+                if (sectorIdFromMap.equals(sectorIdFromList)) {
+                    countMap3.put(sectorIdFromMap, countMap3.computeIfAbsent(sectorIdFromMap, a -> 0) + 1);
+                }
+            });
+        });
+        System.out.println(countMap3);
+
+        String computeIfAbsent = sectors.computeIfAbsent(26, x -> "Ecommerce");
+        System.out.println("The output of computeIfAbsent is: " + computeIfAbsent + " and the state of sectors map is: " + sectors);
     }
 }

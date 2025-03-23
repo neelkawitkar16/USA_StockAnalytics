@@ -10,7 +10,7 @@ import java.util.ArrayList;
 
 public class StockPriceHistoryDAO extends BaseDAO {
 
-    public ArrayList<StockPriceHistoryVO> getStockPriceHistory() throws SQLException {
+    public ArrayList<StockPriceHistoryVO> getStockPriceHistory() {
         String sqlQuery = """
                  SELECT *
                  FROM endeavour.stocks_price_history 
