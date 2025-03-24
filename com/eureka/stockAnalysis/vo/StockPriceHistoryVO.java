@@ -63,12 +63,12 @@ public class StockPriceHistoryVO {
     @Override
     public boolean equals(Object o) {
         if (!(o instanceof StockPriceHistoryVO that)) return false;
-        return Objects.equals(getTickerSymbol(), that.getTickerSymbol());
+        return Objects.equals(getTickerSymbol(), that.getTickerSymbol()) && Objects.equals(getTradingDate(), that.getTradingDate());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(getTickerSymbol());
+        return Objects.hash(getTickerSymbol(), getTradingDate());
     }
 
     @Override

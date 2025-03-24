@@ -2,6 +2,7 @@ package com.eureka.playground;
 
 import com.eureka.stockAnalysis.vo.Stocks;
 
+import java.util.Arrays;
 import java.util.Scanner;
 
 public class TestPlayground {
@@ -16,6 +17,10 @@ public class TestPlayground {
         System.out.println(arr);
         System.out.println(arr[4]);
         System.out.println(arr.length);
+
+        String[] names = {"Amogh", "Shone", "Shantanu", "Farhan"};
+        System.out.println("printing array without toString gives: " + names);
+        System.out.println("printing array with toString gives: " + Arrays.toString(names));
 
        /* //Java Scanner to accept inputs from user through console
         Scanner scanner = new Scanner(System.in);

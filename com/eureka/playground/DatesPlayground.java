@@ -24,11 +24,11 @@ public class DatesPlayground {
         Instant instant = now.minusSeconds(600);
         System.out.println("Instant minus 10 mins: " + instant);
 
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-mm-dd");
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-mm-dd HH:mm:ss");
         simpleDateFormat.setTimeZone(TimeZone.getTimeZone(ZoneId.of("Asia/Singapore")));
-        Date dateobject = simpleDateFormat.parse("2024-01-29");
+        Date dateobject = simpleDateFormat.parse("2024-01-29 02:00:00");
         System.out.println("Date parsed using simple date format: " + dateobject);
-        //System.out.println("The month in date obj is: " + dateobject.getMonth());
+        System.out.println("The month in date obj is: " + dateobject.getMonth());
 
         //New way to deal with Dates in Java
         LocalDate localDate = LocalDate.now();

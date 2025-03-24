@@ -46,11 +46,15 @@ public class StockFundamentalsVO implements Comparable<StockFundamentalsVO>{
         this.tickerSymbol = tickerSymbol;
     }
 
-    public String getTickerSymbol(String accessToken) {
+/*    public String getTickerSymbol(String accessToken) {
         if(accessToken == "abc") {
             return tickerSymbol;
         }
         return "You are not Authorized";
+    }*/
+
+    public String getTickerSymbol() {
+            return tickerSymbol;
     }
 
 

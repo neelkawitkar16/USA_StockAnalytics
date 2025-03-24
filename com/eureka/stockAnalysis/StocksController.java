@@ -10,6 +10,7 @@ import com.eureka.stockAnalysis.sort.SFMarketCapComparator;
 import com.eureka.stockAnalysis.vo.*;
 
 import java.sql.SQLException;
+import java.time.LocalDate;
 
 public class StocksController {
     public static  void main(String[] args) throws SQLException {
@@ -19,16 +20,22 @@ public class StocksController {
         CompanyLocationsDAO companyLocationsDAO = new CompanyLocationsDAO();
         MarketAnalyticsService marketAnalyticsService = new MarketAnalyticsService(lookupDAO, stockFundamentals2DAO, stockPriceHistoryDAO, companyLocationsDAO);
 
-        marketAnalyticsService.getAllSectors();
+//        marketAnalyticsService.getAllSectors();
 
-        marketAnalyticsService.getAllSubsectors();
+//        marketAnalyticsService.getAllSubsectors();
 
-        marketAnalyticsService.getTopStocks();
+//        marketAnalyticsService.getTopStocks();
 
-        marketAnalyticsService.getCompanyLocations();
+//        marketAnalyticsService.getCompanyLocations();
 
-        marketAnalyticsService.getLastThirtyDayStocks();
+//        marketAnalyticsService.getLastThirtyDayStocks();
 
-        marketAnalyticsService.getAllStockFundamentals();
+//        marketAnalyticsService.getAllStockFundamentals();
+
+/*        marketAnalyticsService.getSpecificStockPriceHistory("AAPL",
+                LocalDate.parse("2024-01-01"),
+                LocalDate.parse("2024-02-28"));*/
+
+        marketAnalyticsService.processHealthCareStocks();
     }
 }

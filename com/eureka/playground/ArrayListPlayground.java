@@ -3,9 +3,9 @@ package com.eureka.playground;
 import com.eureka.inheritance.CheckingAccount;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
+import java.sql.Array;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class ArrayListPlayground {
     public static void main(String[] args) {
@@ -53,7 +53,7 @@ public class ArrayListPlayground {
         }
 
         // sort() the Arraylist elements of the tickerSymbol
-         Collections.sort(tickerSymbol);
+        Collections.sort(tickerSymbol);
         System.out.println(tickerSymbol);
 
         // without declaring the type of the ArrayList. It can take heterogeneous values. Not recommended
@@ -75,5 +75,48 @@ public class ArrayListPlayground {
             System.out.println("Ticker Symbol in Consumer: " + s);
         });
 
+        //Java Streams
+        List<Integer> intlist = List.of(1,2,3,5,6,7,8);
+        List<Integer> squareList = new ArrayList<>();
+        //Generates squares of list without streams/using foreach loop
+        intlist.forEach( s -> {
+            squareList.add(s*s);
+                }
+        );
+        System.out.println("List of Squares: " + squareList);
+
+        //Streams from Java 8
+        //Even Squares using Streams
+        Optional<Integer> reduce = intlist.stream() // Starting a stream on IntList
+                .map(n -> n * n) // intermediate function
+                .filter( n -> n%2 != 0 ) // intermediate function to filter the list
+                .reduce((a,b) -> a+b); // terminal function
+                //.collect(Collectors.toList()); // terminal function
+
+        reduce.ifPresent(System.out::println);
+
+        System.out.println(reduce);
+
+        String inputValue = null;
+
+        Optional<String> outputValue = Optional.ofNullable(inputValue);
+
+        if (outputValue.isPresent()) {
+            System.out.println(outputValue);
+        } else {
+            System.out.println("Something");
+        }
+
+        outputValue.ifPresent(System.out::println);
+
+        Optional<String> inputValue1 = Optional.ofNullable(inputValue);
+        String something = Optional.ofNullable(inputValue).orElse("Something");
+        Optional<String> exampleOptinal = Optional.ofNullable(null);
+        exampleOptinal.ifPresentOrElse(System.out::println, new Runnable() {
+            @Override
+            public void run() {
+                System.out.println("Something");
+            }
+        });
     }
 }
