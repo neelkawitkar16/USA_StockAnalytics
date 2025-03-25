@@ -36,6 +36,18 @@ public class StocksController {
                 LocalDate.parse("2024-01-01"),
                 LocalDate.parse("2024-02-28"));*/
 
-        marketAnalyticsService.processHealthCareStocks();
+//        marketAnalyticsService.processHealthCareStocks();
+//
+//
+//        marketAnalyticsService.blueChipStocks();
+
+//        marketAnalyticsService.smallCapStocks();
+
+//        marketAnalyticsService.getSectorMap();
+
+//        marketAnalyticsService.anotherGetSectorMap();
+
+        marketAnalyticsService.calculateMarketCapBySubsectors();
+
     }
 }

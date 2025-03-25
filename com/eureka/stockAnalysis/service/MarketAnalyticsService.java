@@ -241,4 +241,145 @@ public class MarketAnalyticsService {
         });
         System.out.println(collect2);
     }
+
+    //Get the list of stock fundamentals of all the BlueChip stocks (MC > 10B)
+    public void blueChipStocks() {
+        ArrayList<StockFundamentalsVO> allStockFundamentalsList = stockFundamentalsDAO.getAllStockFundamentals();
+
+        List<StockFundamentalsVO> blueChipStockList = allStockFundamentalsList.stream()
+                .filter(stockFundamentalsVO ->
+                        stockFundamentalsVO.getMarketCap().compareTo(new BigDecimal(1000000000)) >= 0) // intermediate function
+                .sorted(Comparator.comparing(StockFundamentalsVO::getMarketCap).reversed()) // intermediate function
+                .collect(Collectors.toList()); //terminal function
+
+        System.out.println(blueChipStockList);
+
+        // Calculate the sum of all blue-chip stock market caps
+        BigDecimal totalMarketCap = blueChipStockList.stream()
+                .map(StockFundamentalsVO::getMarketCap) // Extract market caps
+                .reduce(BigDecimal.ZERO, BigDecimal::add); // Sum them
+
+        System.out.println("Total Market Cap of Blue-Chip Stocks: " + totalMarketCap);
+    }
+
+
+    // Method to identify small cap stocks. Small cap stocks have a market cap between 250 million and 2 billion USD
+    public void smallCapStocks() {
+        ArrayList<StockFundamentalsVO> allStockFundamentalsList = stockFundamentalsDAO.getAllStockFundamentals();
+
+        Map<String, StockFundamentalsVO> smallCapStocksMap = allStockFundamentalsList.stream()
+                .filter(stockFundamentalsVO ->
+                        stockFundamentalsVO.getMarketCap().compareTo(new BigDecimal(2000000000)) < 0)
+                .filter(stockFundamentalsVO ->
+                        stockFundamentalsVO.getMarketCap().compareTo(new BigDecimal(250000000)) >= 0)
+                .collect(Collectors.toMap(StockFundamentalsVO::getTickerSymbol,
+                        stockFundamentalsVO -> {
+                            return stockFundamentalsVO; // returning the object
+                        }));
+
+        System.out.println(smallCapStocksMap);
+
+        // total MC of small cap stocks
+        ArrayList<StockFundamentalsVO> allStockFundamentalsList1 = stockFundamentalsDAO.getAllStockFundamentals();
+
+            // Filter small-cap stocks and collect them in a List
+            List<StockFundamentalsVO> smallCapStockList = allStockFundamentalsList1.stream()
+                    .filter(stockFundamentalsVO ->
+                            stockFundamentalsVO.getMarketCap().compareTo(new BigDecimal(2000000000)) < 0) // Less than 2B
+                    .filter(stockFundamentalsVO ->
+                            stockFundamentalsVO.getMarketCap().compareTo(new BigDecimal(250000000)) >= 0) // Greater than or equal to 250M
+                    .collect(Collectors.toList());
+
+            // Calculate the total market capitalization of small-cap stocks
+            Optional<BigDecimal> totalMarketCap = smallCapStockList.stream()
+                    .map(StockFundamentalsVO::getMarketCap) // Extract the market cap
+                    .reduce(BigDecimal::add);
+
+            totalMarketCap.ifPresent(s -> System.out.println("Total Market Cap of Small-Cap Stocks: " + s));
+    }
+
+    //{Communication Services=93, Utilities=62, Financial Services=319, Basic Materials=81}
+    public void getSectorMap() {
+        //get stock fundamentals and sector lookup data
+        ArrayList<StockFundamentalsVO> allStockFundamentalsList = stockFundamentalsDAO.getAllStockFundamentals();
+        ArrayList<SectorVO> sectorLookUpList = lookupDAO.getAllSectors();
+
+        //Create a Map of SectorID -> SectorName
+        Map<Integer, String> sectorMap = sectorLookUpList.stream()
+                .collect(Collectors.toMap(SectorVO::getSectorID, SectorVO::getSectorName)); //{34=Healthcare, 35=Basic Materials, 36=Industrials}
+
+        //Converting StockFundamentalsList  to a SectorID and List<StockfundamentalVO>
+        Map<Integer, List<StockFundamentalsVO>> stockFundamentalsSectorMap  = allStockFundamentalsList.stream()
+                .collect(Collectors.groupingBy(stockFundamentalsVO -> stockFundamentalsVO.getSectorId()));
+
+        //Create a Map of SectorName -> Count of Stocks
+        Map<String, Integer> finalOutputMap = new HashMap<>();
+        sectorMap.forEach((sectorID, sectorName) -> {
+            if (stockFundamentalsSectorMap.get(sectorID) !=null) {
+                finalOutputMap.put(sectorName, stockFundamentalsSectorMap.get(sectorID).size());
+            }
+        });
+        System.out.println(finalOutputMap);
+    }
+
+    //another way for the above solution
+    /**
+     * Print sector names and number of stocks in each sector: using Compute if Absent
+     * Healthcare: 510
+     * Basic Materials: 108
+     * Financial Services: 486
+     * Industrials: 391
+     * Technology: 368
+     * ...
+     * Sector lookup data is available from the lookupsDao
+     * Stock fundamentals data is available from the stockFundamentsDao
+     */
+    public void anotherGetSectorMap() {
+        ArrayList<SectorVO> allSectorsList = lookupDAO.getAllSectors();
+        ArrayList<StockFundamentalsVO> allStockFundamentalsList = stockFundamentalsDAO.getAllStockFundamentals();
+
+        Map<Integer, String> sectosMap = allSectorsList.stream()
+                .collect(Collectors.toMap(SectorVO::getSectorID,
+                        SectorVO::getSectorName));
+
+        Map<String, Integer> finalOutputMap = new HashMap<>();
+
+        allStockFundamentalsList.forEach(stockFundamentalsVO -> {
+            int sectorId = stockFundamentalsVO.getSectorId();
+            String sectorName = sectosMap.get(sectorId);
+            finalOutputMap.put(sectorName, finalOutputMap.computeIfAbsent(sectorName, k -> 0) + 1);
+        });
+        System.out.println(finalOutputMap);
+    }
+
+    /*
+     Calculates the total market cap for each SubSector of the economy
+     Example Output:
+     Airport Services : 1500000000
+     Healthcare Plans : 834443045
+    */
+    public void calculateMarketCapBySubsectors() {
+        ArrayList<StockFundamentalsVO> allStockFundamentalsList = stockFundamentalsDAO.getAllStockFundamentals();
+        ArrayList<SubsectorVO> allSubSectorsList = lookupDAO.getAllSubSectors();
+        Map<String, BigDecimal> finalOutputMap = new HashMap<>();
+
+        Map<Integer, String> sectorMap = allSubSectorsList.stream()
+                .collect(Collectors.toMap(SubsectorVO::getSubsectorID,
+                        SubsectorVO::getSubsectorName));
+
+        Map<Integer, List<StockFundamentalsVO>> stockFundamentalsMap = allStockFundamentalsList.stream()
+                .collect(Collectors.groupingBy(StockFundamentalsVO::getSubSectorId));
+
+        sectorMap.forEach((subsectorID, subsectorName) ->{
+            if (stockFundamentalsMap.get(subsectorID)!= null) {
+                Optional<BigDecimal> marketCap = stockFundamentalsMap.get(subsectorID).stream()
+                        .map(StockFundamentalsVO::getMarketCap)
+                        .reduce(BigDecimal::add);
+                if (!marketCap.isEmpty()) {
+                    finalOutputMap.put(subsectorName, marketCap.get());
+                }
+            }
+        });
+        System.out.println(finalOutputMap);
+    }
 }
