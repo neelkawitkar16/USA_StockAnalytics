@@ -32,9 +32,11 @@ public class StocksController {
 
 //        marketAnalyticsService.getAllStockFundamentals();
 
-/*        marketAnalyticsService.getSpecificStockPriceHistory("AAPL",
+/*
+          marketAnalyticsService.getSpecificStockPriceHistory("AAPL",
                 LocalDate.parse("2024-01-01"),
-                LocalDate.parse("2024-02-28"));*/
+                LocalDate.parse("2024-02-28"));
+*/
 
 //        marketAnalyticsService.processHealthCareStocks();
 //
@@ -47,7 +49,9 @@ public class StocksController {
 
 //        marketAnalyticsService.anotherGetSectorMap();
 
-        marketAnalyticsService.calculateMarketCapBySubsectors();
+//        marketAnalyticsService.calculateMarketCapBySubsectors();
+
+        marketAnalyticsService.displayLowestClosingPrice("AAPL");
 
     }
 }

@@ -10,6 +10,7 @@ import com.eureka.stockAnalysis.vo.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.Year;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -381,5 +382,40 @@ public class MarketAnalyticsService {
             }
         });
         System.out.println(finalOutputMap);
+    }
+
+/*
+    Session 12 Assignment:
+    For a given ticker, like 'AAPL' get stock history for past 5 years
+    For each year, print the lowest closing price
+*/
+    public void displayLowestClosingPrice(String tickerSymbol) {
+
+        LocalDate toDate = LocalDate.now();
+        LocalDate fromDate = toDate.minusYears(5);
+
+        // Get the stock price history for the past 5 years
+        ArrayList<StockPriceHistoryVO> priceHistory =
+                stockPriceHistoryDAO.getSpecificStockPriceHistory(tickerSymbol, fromDate, toDate);
+
+        // Group by year and find the lowest closing price for each year
+        Map<Integer, Optional<StockPriceHistoryVO>> lowestByYear = priceHistory.stream()
+                .collect(Collectors.groupingBy(
+                        vo -> vo.getTradingDate().getYear(),
+                        Collectors.minBy(Comparator.comparing(StockPriceHistoryVO::getClosePrice))
+                ));
+
+        // Print the results
+        System.out.println("Lowest closing prices for " + tickerSymbol + " by year:");
+        lowestByYear.entrySet().stream()
+                .sorted(Map.Entry.comparingByKey())
+                .forEach(entry -> {
+                    entry.getValue().ifPresent(vo ->
+                            System.out.printf("Year %d: Lowest Close Price = %.2f (Date: %s)%n",
+                                    entry.getKey(),
+                                    vo.getClosePrice(),
+                                    vo.getTradingDate())
+                    );
+                });
     }
 }
