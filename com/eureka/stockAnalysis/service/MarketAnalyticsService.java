@@ -9,9 +9,12 @@ import com.eureka.stockAnalysis.sort.SFMarketCapComparator;
 import com.eureka.stockAnalysis.vo.*;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDate;
+import java.time.Month;
 import java.time.Year;
 import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 public class MarketAnalyticsService {
@@ -218,7 +221,6 @@ public class MarketAnalyticsService {
 
         //System.out.println(collect1);
 
-
         //Filter for Health Care and create a map as below
         // subsectorID and list of Stck Fundamentals
         Map<Integer, List<StockFundamentalsVO>> collect2 = allStockFundamentalsList.stream()
@@ -391,6 +393,7 @@ public class MarketAnalyticsService {
 */
     public void displayLowestClosingPrice(String tickerSymbol) {
 
+        //Date Range
         LocalDate toDate = LocalDate.now();
         LocalDate fromDate = toDate.minusYears(5);
 
@@ -401,13 +404,13 @@ public class MarketAnalyticsService {
         // Group by year and find the lowest closing price for each year
         Map<Integer, Optional<StockPriceHistoryVO>> lowestByYear = priceHistory.stream()
                 .collect(Collectors.groupingBy(
-                        vo -> vo.getTradingDate().getYear(),
-                        Collectors.minBy(Comparator.comparing(StockPriceHistoryVO::getClosePrice))
+                        vo -> vo.getTradingDate().getYear(), //Extracts the year from tradingDate
+                        Collectors.minBy(Comparator.comparing(StockPriceHistoryVO::getClosePrice)) //compare stock records by closing price
                 ));
 
         // Print the results
         System.out.println("Lowest closing prices for " + tickerSymbol + " by year:");
-        lowestByYear.entrySet().stream()
+        lowestByYear.entrySet().stream() //Converts the Map into a stream of entries
                 .sorted(Map.Entry.comparingByKey())
                 .forEach(entry -> {
                     entry.getValue().ifPresent(vo ->
@@ -417,5 +420,172 @@ public class MarketAnalyticsService {
                                     vo.getTradingDate())
                     );
                 });
+    }
+
+    // Demo 2
+    public void printStockHistoryByMonth(String tickerSymbol) {
+
+        LocalDate startOfYear = LocalDate.of(2024, 1, 1);
+        LocalDate endOfYear = LocalDate.of(2024, 12, 31);
+
+        ArrayList<StockPriceHistoryVO> priceHistoryList =
+                stockPriceHistoryDAO.getSpecificStockPriceHistory(tickerSymbol, startOfYear, endOfYear);
+
+        //Group stock history by month
+        Map<Month, List<StockPriceHistoryVO>> stockPriceHistoryByMonthMap = priceHistoryList.stream()
+                .collect(Collectors.groupingBy(
+                        vo -> vo.getTradingDate().getMonth()));
+
+        stockPriceHistoryByMonthMap.forEach((month, stockList) -> {
+            System.out.println("Month: " + month);
+            stockList.forEach(vo ->
+                    System.out.printf("Date: %s, Open Price: %.2f, Close Price: %.2f%n",
+                            vo.getTradingDate(), vo.getOpenPrice(), vo.getClosePrice()
+                    )
+            );
+            System.out.println("------------------------------------------------");
+        });
+    }
+
+    public void getStateTotalMarketCapMap(){
+        ArrayList<StockFundamentalsVO> allStockFundamentalsList = stockFundamentalsDAO.getAllStockFundamentals();
+        ArrayList<CompanyLocationsVO> allCompanyLocations = companyLocationsDAO.getAllCompanyLocations();
+        Map<String, BigDecimal> finalOutputMap = new HashMap<>();
+        Map<String, List<String>> stateTickersList = allCompanyLocations.stream()
+                .collect(Collectors.groupingBy(CompanyLocationsVO::getState,
+                        Collectors.mapping(CompanyLocationsVO::getTicker_symbol, Collectors.toList())));
+
+        Map<String, BigDecimal> stocksMarketCapMap = allStockFundamentalsList.stream()
+                .collect(Collectors.toMap(StockFundamentalsVO::getTickerSymbol,
+                        StockFundamentalsVO::getMarketCap));
+
+        stateTickersList.forEach((state, tickerList) -> {
+            //AL - [ABC, TM, TCC]
+            Optional<BigDecimal> totalMarketCap = stocksMarketCapMap.entrySet().stream()
+                    .filter(a -> {
+                        return tickerList.contains(a.getKey());
+                    })
+                    .map(a -> a.getValue())
+                    .reduce(BigDecimal::add);
+            if(totalMarketCap.isPresent()) {
+                finalOutputMap.put(state, totalMarketCap.get());
+            }
+            //ABC - X Bil
+            //MSFT - Y Bil
+        });
+        System.out.println(finalOutputMap);
+    }
+
+    public void streamsRecap() {
+
+        ArrayList<StockFundamentalsVO> allStockFundamentalsList = stockFundamentalsDAO.getAllStockFundamentals();
+        ArrayList<SectorVO> allSectorsList = lookupDAO.getAllSectors();
+        ArrayList<SubsectorVO> allSubSectorsList = lookupDAO.getAllSubSectors();
+
+        //count of Stocks with no current ratios
+        long stocksWithNoCR = allStockFundamentalsList.stream()
+                .filter(stockFundamentalsVO -> stockFundamentalsVO.getCurrentRatio() == 0.0)
+                .count();
+        System.out.println("Number of Stocks with no current ratio: " + stocksWithNoCR);
+
+        // get the list of all ticker symbols in Technology sectors
+        List<String> technologyStocks = allStockFundamentalsList.stream()
+                .filter(stockFundamentalsVO -> stockFundamentalsVO.getSectorId() == 37)
+                .map(StockFundamentalsVO::getTickerSymbol)
+                .collect(Collectors.toList());
+        System.out.println("The list of all ticker symbols in Technology sectors: " + technologyStocks);
+
+
+        // Using Collectors.joining using delimiter
+        String joinedTickerSymbols = allStockFundamentalsList.stream()
+                .map(StockFundamentalsVO::getTickerSymbol)
+                .collect(Collectors.joining("|"));
+        System.out.println("\nJoined ticker symbols using Collectors.joining: " + joinedTickerSymbols);
+
+        //sorted() function - by current ratio ass and then by market cap desc
+        List<StockFundamentalsVO> orderedStockFundamentalsList = allStockFundamentalsList.stream()
+                .sorted(Comparator.comparing(StockFundamentalsVO::getCurrentRatio)
+                        .thenComparing(Comparator.comparing(StockFundamentalsVO::getMarketCap).reversed()))
+                .collect(Collectors.toList());
+        System.out.println("\nsorted() function - by current ratio ass and then by market cap desc: " + orderedStockFundamentalsList);
+
+        // findFirst() - returns an optional
+        Optional<StockFundamentalsVO> bestMarketCap = allStockFundamentalsList.stream()
+                .sorted(Comparator.comparing(StockFundamentalsVO::getMarketCap).reversed())
+                .findFirst();
+
+        bestMarketCap.ifPresent(a -> System.out.println("\nThe stock with best market cap: " + a));
+
+        //get top 5 stocks by market cap
+        List<StockFundamentalsVO> topFiveStocksByMC = allStockFundamentalsList.stream()
+                .sorted(Comparator.comparing(StockFundamentalsVO::getMarketCap).reversed())
+                .limit(5)
+                .collect(Collectors.toList());
+        System.out.println("get top 5 stocks by marketcap: " + topFiveStocksByMC);
+
+        List<StockFundamentalsVO> topStocksSkippedByTwo = allStockFundamentalsList.stream()
+                .sorted(Comparator.comparing(StockFundamentalsVO::getMarketCap).reversed())
+                .limit(5)
+                .skip(2)
+                .collect(Collectors.toList());
+        System.out.println("The 2nd, 3rd and 4th Stocks by Market Cap" + topStocksSkippedByTwo);
+
+        // toMap() - one-to-one mapping. SectorID, Name
+        Map<Integer, String> sectorMap = allSectorsList.stream()
+                .collect(Collectors.toMap(SectorVO::getSectorID,
+                        SectorVO::getSectorName));
+        System.out.println(sectorMap);
+
+        Map<Integer, BigDecimal> sectorMarketCap = allStockFundamentalsList.stream()
+                .collect(Collectors.toMap(StockFundamentalsVO::getSectorId,
+                        StockFundamentalsVO::getMarketCap,
+                        (a,b) -> a.add(b))); //binary operator which works on duplicate key in a Map
+        System.out.println("\nSector wise total market cap: " + sectorMarketCap);
+
+        Map<Integer, String> SubsectorConcatMap = allSubSectorsList.stream()
+                .collect(Collectors.toMap(SubsectorVO::getSectorID,
+                        SubsectorVO::getSubsectorName
+                        , (a, b) -> a.concat("|").concat(b)));
+        System.out.println(SubsectorConcatMap);
+
+        //reduce() - Total market cap of all technology stocks
+        Optional<BigDecimal> totalMarketCapOfTechStocks = allStockFundamentalsList.stream()
+                .filter(stockFundamentalsVO ->
+                        technologyStocks.contains(stockFundamentalsVO.getSectorId()))
+                .map(StockFundamentalsVO::getMarketCap)
+                .reduce((a, b) -> a.add(b));
+        totalMarketCapOfTechStocks.ifPresent(System.out::println);
+    }
+
+    public void calculateSectorAverageMarketCap() {
+        //Map<SectorName, AvgMarketCap> i.e. Energy=55694254530
+
+        ArrayList<StockFundamentalsVO> allStockFundamentalsList = stockFundamentalsDAO.getAllStockFundamentals();
+        ArrayList<SectorVO> allSectorsList = lookupDAO.getAllSectors();
+
+        Map<Integer, String> sectorMap = allSectorsList.stream()
+                .collect(Collectors.toMap(SectorVO::getSectorID,
+                        SectorVO::getSectorName));
+
+        Map<Integer, List<BigDecimal>> sectorMarketCapMap = allStockFundamentalsList.stream()
+                .collect(Collectors.groupingBy(StockFundamentalsVO::getSectorId,
+                        Collectors.mapping(StockFundamentalsVO::getMarketCap, Collectors.toList())));
+        Map<String, BigDecimal> finalOutputMap = new HashMap<>();
+
+        sectorMap.forEach((sectorID, sectorName) ->{
+            //getting the list of Market Caps by sectorID
+            if (sectorMarketCapMap.get(sectorID) != null) {
+                List<BigDecimal> marketCapList = sectorMarketCapMap.get(sectorID);
+                //Reducing the above list to sum of market caps
+                Optional<BigDecimal> totalMarketCap = marketCapList.stream()
+                        .reduce(BigDecimal::add);
+                //converting optional totalmarket cap to a BigDecimal
+                BigDecimal tmc = totalMarketCap.get();
+                //putting Key value into map by calculating average
+                finalOutputMap.put(sectorName,
+                        tmc.divide(new BigDecimal(marketCapList.size()), RoundingMode.HALF_DOWN));
+            }
+        });
+        System.out.println(finalOutputMap);
     }
 }

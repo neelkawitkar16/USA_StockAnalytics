@@ -51,7 +51,14 @@ public class StocksController {
 
 //        marketAnalyticsService.calculateMarketCapBySubsectors();
 
-        marketAnalyticsService.displayLowestClosingPrice("AAPL");
+//        marketAnalyticsService.displayLowestClosingPrice("AAPL");
 
+//        marketAnalyticsService.printStockHistoryByMonth("MSFT");
+
+        marketAnalyticsService.getStateTotalMarketCapMap();
+
+//        marketAnalyticsService.streamsRecap();
+
+//        marketAnalyticsService.calculateSectorAverageMarketCap();
     }
 }

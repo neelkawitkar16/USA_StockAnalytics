@@ -43,4 +43,32 @@ public class CompanyLocationsDAO extends BaseDAO {
         }
         return companyLocationList;
     }
+
+    public ArrayList<CompanyLocationsVO> getAllCompanyLocations() {
+        String sqlQuery = """
+                select
+                     *
+                from
+                     endeavour.company_locations cl
+                """;
+
+        ArrayList<CompanyLocationsVO> companyLocationList = new ArrayList<>();
+
+        try {
+            PreparedStatement preparedStatement = connection.prepareStatement(sqlQuery);
+            ResultSet resultSet = preparedStatement.executeQuery();
+
+            while(resultSet.next()) {
+                CompanyLocationsVO CompanyLocationsVO = new CompanyLocationsVO();
+                CompanyLocationsVO.setTicker_symbol(resultSet.getString("ticker_symbol"));
+                CompanyLocationsVO.setCity(resultSet.getString("city"));
+                CompanyLocationsVO.setState(resultSet.getString("state"));
+                CompanyLocationsVO.setZip(resultSet.getString("zip"));
+                companyLocationList.add(CompanyLocationsVO);
+            }
+        } catch (SQLException e) {
+            throw new StockException("There is stock exception in the CompanyLocation DAO:" + e.getMessage(), e.getCause());
+        }
+        return companyLocationList;
+    }
 }
