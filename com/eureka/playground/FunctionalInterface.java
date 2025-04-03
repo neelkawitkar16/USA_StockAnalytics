@@ -3,7 +3,9 @@ package com.eureka.playground;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 public class FunctionalInterface {
@@ -49,6 +51,34 @@ public class FunctionalInterface {
             percentageConsumer.accept(student);
         }
 
+        //Using streams
+        listOfStudents.stream()
+                .forEach((Student stu) -> System.out.println(stu.getName() + " " + stu.getPercentage()));
+                //.forEach( stu -> System.out.println(stu.getName() + " " + stu.getPercentage()));    alternative 1
+                //.forEach(percentageConsumer);    alternative 2
+
+
+        //Lambda expression implementing Function : Extracting only the names of all students
+        Function<Student, String> nameFunction = (Student student) -> student.getName(); //Input is student object and outputs its name as a String
+
+        List<String> studentNames = new ArrayList<String>();
+        for (Student student : listOfStudents)
+        {
+            studentNames.add(nameFunction.apply(student));
+        }
+        System.out.println("Using Function<T,R> which applies to object to get student names: " + studentNames);
+
+        //Using streams
+        List<String> studentNamesList = listOfStudents.stream()
+                .map((Student stu) -> stu.getName())
+                //.map( stu -> stu.getName())                       alternative
+                .collect(Collectors.toList());
+        System.out.println("\nUsing streams: " + studentNamesList);
+
+        //Lambda expression implementing Supplier : Creating a new Student
+        Supplier<Student> studentSupplier = () -> new Student(111111, "New Student", 92.9, "Java 8");   //Supplier<T>, where T is the type of object it supplies (Student in this case)
+        listOfStudents.add(studentSupplier.get());  //get method executes the lambda expression, which creates and returns a new Student object
+        System.out.println("\nUsing supplier to add a new student: " + listOfStudents);
 
     }
 }

@@ -588,4 +588,23 @@ public class MarketAnalyticsService {
         });
         System.out.println(finalOutputMap);
     }
+
+
+//    From STOCK_FUNDAMENTALS, For each sector id, find the subsector id which has the highest market cap for that sector
+    public void highestMarketCapSubsector() {
+        ArrayList<StockFundamentalsVO> stockFundamentalsList = stockFundamentalsDAO.getStockFundamentals();
+
+        Map<Integer, Integer> highestMarketCapSubsector = stockFundamentalsList.stream()
+                .collect(Collectors.groupingBy(
+                        StockFundamentalsVO::getSectorId,
+                        Collectors.collectingAndThen(
+                                Collectors.maxBy(Comparator.comparing(StockFundamentalsVO::getMarketCap)),
+                                opt -> opt.map(StockFundamentalsVO::getSubSectorId).orElse(null)
+                        )
+                ));
+
+        highestMarketCapSubsector.forEach((sectorId, subsectorId) ->
+                System.out.println("Sector ID: " + sectorId + ", Highest Market Cap Subsector ID: " + subsectorId)
+        );
+    }
 }

@@ -55,10 +55,12 @@ public class StocksController {
 
 //        marketAnalyticsService.printStockHistoryByMonth("MSFT");
 
-        marketAnalyticsService.getStateTotalMarketCapMap();
+//        marketAnalyticsService.getStateTotalMarketCapMap();
 
 //        marketAnalyticsService.streamsRecap();
 
 //        marketAnalyticsService.calculateSectorAverageMarketCap();
+
+        marketAnalyticsService.highestMarketCapSubsector();
     }
 }
